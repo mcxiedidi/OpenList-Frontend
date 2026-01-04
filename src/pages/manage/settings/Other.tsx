@@ -20,6 +20,7 @@ const OtherSettings = () => {
   const [uri, setUri] = createSignal("")
   const [secret, setSecret] = createSignal("")
   const [qbitUrl, setQbitUrl] = createSignal("")
+  const [pan123TempDir, set123TempDir] = createSignal("")
   const [qbitSeedTime, setQbitSeedTime] = createSignal("")
   const [transmissionUrl, setTransmissionUrl] = createSignal("")
   const [transmissionSeedTime, setTransmissionSeedTime] = createSignal("")
@@ -53,6 +54,12 @@ const OtherSettings = () => {
       r.post("/admin/setting/set_transmission", {
         uri: transmissionUrl(),
         seedtime: transmissionSeedTime(),
+      }),
+  )
+  const [set123PanLoading, set123Pan] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_123_pan", {
+        temp_dir: pan123TempDir(),
       }),
   )
   const [set115Loading, set115] = useFetch(
@@ -105,6 +112,7 @@ const OtherSettings = () => {
       setSecret(data.find((i) => i.key === "aria2_secret")?.value || "")
       setToken(data.find((i) => i.key === "token")?.value || "")
       setQbitUrl(data.find((i) => i.key === "qbittorrent_url")?.value || "")
+      set123TempDir(data.find((i) => i.key === "123_pan_temp_dir")?.value || "")
       setQbitSeedTime(
         data.find((i) => i.key === "qbittorrent_seedtime")?.value || "",
       )
@@ -267,6 +275,29 @@ const OtherSettings = () => {
         }}
       >
         {t("settings_other.set_115_open")}
+      </Button>
+      <Heading my="$2">{t("settings_other.123_pan")}</Heading>
+      <FormControl w="$full" display="flex" flexDirection="column">
+        <FormLabel for="123_temp_dir" display="flex" alignItems="center">
+          {t(`settings.123_temp_dir`)}
+        </FormLabel>
+        <FolderChooseInput
+          id="123_temp_dir"
+          value={pan123TempDir()}
+          onChange={(path) => set123TempDir(path)}
+        />
+      </FormControl>
+      <Button
+        my="$2"
+        loading={set123PanLoading()}
+        onClick={async () => {
+          const resp = await set123Pan()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("settings_other.set_123_pan")}
       </Button>
       <Heading my="$2">{t("settings_other.123_open")}</Heading>
       <FormControl w="$full" display="flex" flexDirection="column">
