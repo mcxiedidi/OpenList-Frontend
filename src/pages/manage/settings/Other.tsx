@@ -7,285 +7,437 @@ import {
   Input,
   SimpleGrid,
 } from "@hope-ui/solid"
-import { For } from "solid-js"
-import { createStore } from "solid-js/store"
+import { createSignal } from "solid-js"
 import { FolderChooseInput, MaybeLoading } from "~/components"
 import { useFetch, useManageTitle, useT, useUtil } from "~/hooks"
 import { Group, SettingItem, PResp } from "~/types"
 import { handleResp, notify, r } from "~/utils"
 import { Item } from "./SettingItem"
 
-interface FieldConfig {
-  key: string
-  type: "input" | "folder"
-  labelKey: string
-}
-
-interface SettingConfig {
-  key: string
-  titleKey: string
-  api: string
-  fields: FieldConfig[]
-  buttonKey?: string
-}
-
 const OtherSettings = () => {
   const t = useT()
-  const { copy } = useUtil()
   useManageTitle("manage.sidemenu.other")
-
-  // use Store to manage form data
-  const [form, setForm] = createStore<Record<string, string>>({
-    token: "",
-  })
-
-  const [settings, setSettings] = createStore<{ list: SettingItem[] }>({
-    list: [],
-  })
-
-  const settingConfigs: SettingConfig[] = [
-    {
-      key: "aria2",
-      titleKey: "settings_other.aria2",
-      api: "/admin/setting/set_aria2",
-      fields: [
-        { key: "uri", type: "input", labelKey: "aria2_uri" },
-        { key: "secret", type: "input", labelKey: "aria2_secret" },
-      ],
-    },
-    {
-      key: "qbittorrent",
-      titleKey: "settings_other.qbittorrent",
-      api: "/admin/setting/set_qbit",
-      fields: [
-        { key: "url", type: "input", labelKey: "qbittorrent_url" },
-        {
-          key: "seedtime",
-          type: "input",
-          labelKey: "qbittorrent_seedtime",
-        },
-      ],
-    },
-    {
-      key: "transmission",
-      titleKey: "settings_other.transmission",
-      api: "/admin/setting/set_transmission",
-      fields: [
-        {
-          key: "uri",
-          type: "input",
-          labelKey: "transmission_uri",
-        },
-        {
-          key: "seedtime",
-          type: "input",
-          labelKey: "transmission_seedtime",
-        },
-      ],
-    },
-    {
-      key: "115",
-      titleKey: "settings_other.115",
-      api: "/admin/setting/set_115",
-      fields: [
-        {
-          key: "temp_dir",
-          type: "folder",
-          labelKey: "settings_other.115_temp_dir",
-        },
-      ],
-    },
-    {
-      key: "115_open",
-      titleKey: "settings_other.115_open",
-      api: "/admin/setting/set_115_open",
-      fields: [
-        {
-          key: "temp_dir",
-          type: "folder",
-          labelKey: "settings_other.115_open_temp_dir",
-        },
-      ],
-    },
-    {
-      key: "123_pan",
-      titleKey: "settings_other.123_pan",
-      api: "/admin/setting/set_123_pan",
-      fields: [
-        {
-          key: "temp_dir",
-          type: "folder",
-          labelKey: "settings_other.123_temp_dir",
-        },
-      ],
-    },
-    {
-      key: "123_open",
-      titleKey: "settings_other.123_open",
-      api: "/admin/setting/set_123_open",
-      fields: [
-        {
-          key: "temp_dir",
-          type: "folder",
-          labelKey: "settings_other.123_open_temp_dir",
-        },
-        {
-          key: "callback_url",
-          type: "input",
-          labelKey: "settings_other.123_open_callback_url",
-        },
-      ],
-    },
-    {
-      key: "pikpak",
-      titleKey: "settings_other.pikpak",
-      api: "/admin/setting/set_pikpak",
-      fields: [
-        {
-          key: "temp_dir",
-          type: "folder",
-          labelKey: "settings_other.pikpak_temp_dir",
-        },
-      ],
-    },
-    {
-      key: "thunder",
-      titleKey: "settings_other.thunder",
-      api: "/admin/setting/set_thunder",
-      fields: [
-        {
-          key: "temp_dir",
-          type: "folder",
-          labelKey: "settings_other.thunder_temp_dir",
-        },
-      ],
-    },
-    {
-      key: "thunder_browser",
-      titleKey: "settings_other.thunder_browser",
-      api: "/admin/setting/set_thunder_browser",
-      fields: [
-        {
-          key: "temp_dir",
-          type: "folder",
-          labelKey: "settings_other.thunder_browser_temp_dir",
-        },
-      ],
-    },
-    {
-      key: "thunderx",
-      titleKey: "settings_other.thunderx",
-      api: "/admin/setting/set_thunderx",
-      fields: [
-        {
-          key: "temp_dir",
-          type: "folder",
-          labelKey: "settings_other.thunderX_temp_dir",
-        },
-      ],
-    },
-  ]
-
+  const [uri, setUri] = createSignal("")
+  const [secret, setSecret] = createSignal("")
+  const [qbitUrl, setQbitUrl] = createSignal("")
+  const [pan123TempDir, set123TempDir] = createSignal("")
+  const [qbitSeedTime, setQbitSeedTime] = createSignal("")
+  const [transmissionUrl, setTransmissionUrl] = createSignal("")
+  const [transmissionSeedTime, setTransmissionSeedTime] = createSignal("")
+  const [pan115TempDir, set115TempDir] = createSignal("")
+  const [pan115OpenTempDir, set115OpenTempDir] = createSignal("")
+  const [pan123OpenTempDir, set123OpenTempDir] = createSignal("")
+  const [pan123OpenCallbackUrl, set123OpenCallbackUrl] = createSignal("")
+  const [pikpakTempDir, setPikPakTempDir] = createSignal("")
+  const [thunderTempDir, setThunderTempDir] = createSignal("")
+  const [thunderBrowserTempDir, setThunderBrowserTempDir] = createSignal("")
+  const [thunderXTempDir, setThunderXTempDir] = createSignal("")
+  const [token, setToken] = createSignal("")
+  const [settings, setSettings] = createSignal<SettingItem[]>([])
   const [settingsLoading, settingsData] = useFetch(
     (): PResp<SettingItem[]> =>
       r.get(`/admin/setting/list?groups=${Group.ARIA2},${Group.SINGLE}`),
   )
-
+  const [setAria2Loading, setAria2] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_aria2", { uri: uri(), secret: secret() }),
+  )
+  const [setQbitLoading, setQbit] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_qbit", {
+        url: qbitUrl(),
+        seedtime: qbitSeedTime(),
+      }),
+  )
+  const [setTransmissionLoading, setTransmission] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_transmission", {
+        uri: transmissionUrl(),
+        seedtime: transmissionSeedTime(),
+      }),
+  )
+  const [set123PanLoading, set123Pan] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_123_pan", {
+        temp_dir: pan123TempDir(),
+      }),
+  )
+  const [set115Loading, set115] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_115", {
+        temp_dir: pan115TempDir(),
+      }),
+  )
+  const [set115OpenLoading, set115Open] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_115_open", {
+        temp_dir: pan115OpenTempDir(),
+      }),
+  )
+  const [set123OpenLoading, set123Open] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_123_open", {
+        temp_dir: pan123OpenTempDir(),
+        callback_url: pan123OpenCallbackUrl(),
+      }),
+  )
+  const [setPikPakLoading, setPikPak] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_pikpak", {
+        temp_dir: pikpakTempDir(),
+      }),
+  )
+  const [setThunderLoading, setThunder] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_thunder", {
+        temp_dir: thunderTempDir(),
+      }),
+  )
+  const [setThunderXLoading, setThunderX] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_thunderx", {
+        temp_dir: thunderXTempDir(),
+      }),
+  )
+  const [setThunderBrowserLoading, setThunderBrowser] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_thunder_browser", {
+        temp_dir: thunderBrowserTempDir(),
+      }),
+  )
   const refresh = async () => {
     const resp = await settingsData()
     handleResp(resp, (data) => {
-      const newForm: Record<string, string> = {}
-      data.forEach((item) => {
-        newForm[item.key] = item.value
-      })
-      setForm(newForm)
-      setSettings("list", data)
+      setUri(data.find((i) => i.key === "aria2_uri")?.value || "")
+      setSecret(data.find((i) => i.key === "aria2_secret")?.value || "")
+      setToken(data.find((i) => i.key === "token")?.value || "")
+      setQbitUrl(data.find((i) => i.key === "qbittorrent_url")?.value || "")
+      set123TempDir(data.find((i) => i.key === "123_pan_temp_dir")?.value || "")
+      setQbitSeedTime(
+        data.find((i) => i.key === "qbittorrent_seedtime")?.value || "",
+      )
+      setTransmissionUrl(
+        data.find((i) => i.key === "transmission_uri")?.value || "",
+      )
+      setTransmissionSeedTime(
+        data.find((i) => i.key === "transmission_seedtime")?.value || "",
+      )
+      set115TempDir(data.find((i) => i.key === "115_temp_dir")?.value || "")
+      set115OpenTempDir(
+        data.find((i) => i.key === "115_open_temp_dir")?.value || "",
+      )
+      set123OpenTempDir(
+        data.find((i) => i.key == "123_open_temp_dir")?.value || "",
+      )
+      set123OpenCallbackUrl(
+        data.find((i) => i.key === "123_open_callback_url")?.value || "",
+      )
+      setPikPakTempDir(
+        data.find((i) => i.key === "pikpak_temp_dir")?.value || "",
+      )
+      setThunderTempDir(
+        data.find((i) => i.key === "thunder_temp_dir")?.value || "",
+      )
+      setThunderXTempDir(
+        data.find((i) => i.key === "thunderx_temp_dir")?.value || "",
+      )
+      setThunderBrowserTempDir(
+        data.find((i) => i.key === "thunder_browser_temp_dir")?.value || "",
+      )
+      setSettings(data)
     })
   }
   refresh()
-
   const [resetTokenLoading, resetToken] = useFetch(
     (): PResp<string> => r.post("/admin/setting/reset_token"),
   )
-
-  // generic data submit
-  const submitConfig = (config: SettingConfig) => {
-    const [loading, fetchFn] = useFetch((): PResp<string> => {
-      const payload: any = {}
-      config.fields.forEach((f) => (payload[f.key] = form[f.key]))
-      return r.post(config.api, payload)
-    })
-
-    return {
-      loading,
-      execute: async () => {
-        const resp = await fetchFn()
-        handleResp(resp, (data) => notify.success(data))
-      },
-    }
-  }
+  const { copy } = useUtil()
 
   return (
     <MaybeLoading loading={settingsLoading()}>
-      <For each={settingConfigs}>
-        {(config) => {
-          const { loading, execute } = submitConfig(config)
-          return (
-            <>
-              <Heading my="$2">{t(config.titleKey)}</Heading>
-              {config.fields.length === 2 &&
-              config.fields[0].type === "input" ? (
-                <SimpleGrid gap="$2" columns={{ "@initial": 1, "@md": 2 }}>
-                  <For each={config.fields}>
-                    {(field) => (
-                      <Item
-                        {...settings.list.find((i) => i.key === field.key)!}
-                        value={form[field.key] || ""}
-                        onChange={(val) => setForm(field.key, val)}
-                      />
-                    )}
-                  </For>
-                </SimpleGrid>
-              ) : (
-                <FormControl w="$full" display="flex" flexDirection="column">
-                  <For each={config.fields}>
-                    {(field) => (
-                      <>
-                        <FormLabel for={field.key}>
-                          {t(field.labelKey)}
-                        </FormLabel>
-                        {field.type === "folder" ? (
-                          <FolderChooseInput
-                            id={field.key}
-                            value={form[field.key] || ""}
-                            onChange={(val) => setForm(field.key, val)}
-                          />
-                        ) : (
-                          <Input
-                            id={field.key}
-                            value={form[field.key] || ""}
-                            onInput={(e: any) =>
-                              setForm(field.key, e.target.value)
-                            }
-                          />
-                        )}
-                      </>
-                    )}
-                  </For>
-                </FormControl>
-              )}
-              <Button my="$2" loading={loading()} onClick={execute}>
-                {t(config.buttonKey ?? "global.save")}
-              </Button>
-            </>
-          )
+      <Heading mb="$2">{t("settings_other.aria2")}</Heading>
+      <SimpleGrid gap="$2" columns={{ "@initial": 1, "@md": 2 }}>
+        <Item
+          {...settings().find((i) => i.key === "aria2_uri")!}
+          value={uri()}
+          onChange={(str) => setUri(str)}
+        />
+        <Item
+          {...settings().find((i) => i.key === "aria2_secret")!}
+          value={secret()}
+          onChange={(str) => setSecret(str)}
+        />
+      </SimpleGrid>
+      <Button
+        my="$2"
+        loading={setAria2Loading()}
+        onClick={async () => {
+          const resp = await setAria2()
+          handleResp(resp, (data) => {
+            notify.success(`${t("settings_other.aria2_version")} ${data}`)
+          })
         }}
-      </For>
-
+      >
+        {t("global.save")}
+      </Button>
+      <Heading my="$2">{t("settings_other.qbittorrent")}</Heading>
+      <SimpleGrid gap="$2" columns={{ "@initial": 1, "@md": 2 }}>
+        <Item
+          {...settings().find((i) => i.key === "qbittorrent_url")!}
+          value={qbitUrl()}
+          onChange={(str) => setQbitUrl(str)}
+        />
+        <Item
+          {...settings().find((i) => i.key === "qbittorrent_seedtime")!}
+          value={qbitSeedTime()}
+          onChange={(str) => setQbitSeedTime(str)}
+        />
+      </SimpleGrid>
+      <Button
+        my="$2"
+        loading={setQbitLoading()}
+        onClick={async () => {
+          const resp = await setQbit()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("global.save")}
+      </Button>
+      <Heading my="$2">{t("settings_other.transmission")}</Heading>
+      <SimpleGrid gap="$2" columns={{ "@initial": 1, "@md": 2 }}>
+        <Item
+          {...settings().find((i) => i.key === "transmission_uri")!}
+          value={transmissionUrl()}
+          onChange={(str) => setTransmissionUrl(str)}
+        />
+        <Item
+          {...settings().find((i) => i.key === "transmission_seedtime")!}
+          value={transmissionSeedTime()}
+          onChange={(str) => setTransmissionSeedTime(str)}
+        />
+      </SimpleGrid>
+      <Button
+        my="$2"
+        loading={setTransmissionLoading()}
+        onClick={async () => {
+          const resp = await setTransmission()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("global.save")}
+      </Button>
+      <Heading my="$2">{t("settings_other.115")}</Heading>
+      <FormControl w="$full" display="flex" flexDirection="column">
+        <FormLabel for="115_temp_dir" display="flex" alignItems="center">
+          {t("settings_other.115_temp_dir")}
+        </FormLabel>
+        <FolderChooseInput
+          id="115_temp_dir"
+          value={pan115TempDir()}
+          onChange={(path) => set115TempDir(path)}
+        />
+      </FormControl>
+      <Button
+        my="$2"
+        loading={set115Loading()}
+        onClick={async () => {
+          const resp = await set115()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("global.save")}
+      </Button>
+      <Heading my="$2">{t("settings_other.115_open")}</Heading>
+      <FormControl w="$full" display="flex" flexDirection="column">
+        <FormLabel for="115_open_temp_dir" display="flex" alignItems="center">
+          {t("settings_other.115_open_temp_dir")}
+        </FormLabel>
+        <FolderChooseInput
+          id="115_open_temp_dir"
+          value={pan115OpenTempDir()}
+          onChange={(path) => set115OpenTempDir(path)}
+        />
+      </FormControl>
+      <Button
+        my="$2"
+        loading={set115OpenLoading()}
+        onClick={async () => {
+          const resp = await set115Open()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("global.save")}
+      </Button>
+      <Heading my="$2">{t("settings_other.123_pan")}</Heading>
+      <FormControl w="$full" display="flex" flexDirection="column">
+        <FormLabel for="123_temp_dir" display="flex" alignItems="center">
+          {t("settings_other.123_temp_dir")}
+        </FormLabel>
+        <FolderChooseInput
+          id="123_temp_dir"
+          value={pan123TempDir()}
+          onChange={(path) => set123TempDir(path)}
+        />
+      </FormControl>
+      <Button
+        my="$2"
+        loading={set123PanLoading()}
+        onClick={async () => {
+          const resp = await set123Pan()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("global.save")}
+      </Button>
+      <Heading my="$2">{t("settings_other.123_open")}</Heading>
+      <FormControl w="$full" display="flex" flexDirection="column">
+        <FormLabel for="123_open_temp_dir" display="flex" alignItems="center">
+          {t("settings_other.123_open_temp_dir")}
+        </FormLabel>
+        <FolderChooseInput
+          id="123_open_temp_dir"
+          value={pan123OpenTempDir()}
+          onChange={(path) => set123OpenTempDir(path)}
+        />
+        <FormLabel
+          for="123_open_callback_url"
+          display="flex"
+          alignItems="center"
+        >
+          {t("settings_other.123_open_callback_url")}
+        </FormLabel>
+        <Input
+          id="123_open_callback_url"
+          value={pan123OpenCallbackUrl()}
+          onInput={(e) => set123OpenCallbackUrl(e.target.value)}
+        />
+      </FormControl>
+      <Button
+        my="$2"
+        loading={set123OpenLoading()}
+        onClick={async () => {
+          const resp = await set123Open()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("global.save")}
+      </Button>
+      <Heading my="$2">{t("settings_other.pikpak")}</Heading>
+      <FormControl w="$full" display="flex" flexDirection="column">
+        <FormLabel for="pikpak_temp_dir" display="flex" alignItems="center">
+          {t("settings_other.pikpak_temp_dir")}
+        </FormLabel>
+        <FolderChooseInput
+          id="pikpak_temp_dir"
+          value={pikpakTempDir()}
+          onChange={(path) => setPikPakTempDir(path)}
+        />
+      </FormControl>
+      <Button
+        my="$2"
+        loading={setPikPakLoading()}
+        onClick={async () => {
+          const resp = await setPikPak()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("global.save")}
+      </Button>
+      <Heading my="$2">{t("settings_other.thunder")}</Heading>
+      <FormControl w="$full" display="flex" flexDirection="column">
+        <FormLabel for="thunder_temp_dir" display="flex" alignItems="center">
+          {t("settings_other.thunder_temp_dir")}
+        </FormLabel>
+        <FolderChooseInput
+          id="thunder_temp_dir"
+          value={thunderTempDir()}
+          onChange={(path) => setThunderTempDir(path)}
+        />
+      </FormControl>
+      <Button
+        my="$2"
+        loading={setThunderLoading()}
+        onClick={async () => {
+          const resp = await setThunder()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("global.save")}
+      </Button>
+      <Heading my="$2">{t("settings_other.thunder_browser")}</Heading>
+      <FormControl w="$full" display="flex" flexDirection="column">
+        <FormLabel
+          for="thunder_browser_temp_dir"
+          display="flex"
+          alignItems="center"
+        >
+          {t("settings_other.thunder_browser_temp_dir")}
+        </FormLabel>
+        <FolderChooseInput
+          id="thunder_browser_temp_dir"
+          value={thunderBrowserTempDir()}
+          onChange={(path) => setThunderBrowserTempDir(path)}
+        />
+      </FormControl>
+      <Button
+        my="$2"
+        loading={setThunderBrowserLoading()}
+        onClick={async () => {
+          const resp = await setThunderBrowser()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("global.save")}
+      </Button>
+      <Heading my="$2">{t("settings_other.thunderx")}</Heading>
+      <FormControl w="$full" display="flex" flexDirection="column">
+        <FormLabel for="thunderX_temp_dir" display="flex" alignItems="center">
+          {t("settings_other.thunderX_temp_dir")}
+        </FormLabel>
+        <FolderChooseInput
+          id="thunderX_temp_dir"
+          value={thunderXTempDir()}
+          onChange={(path) => setThunderXTempDir(path)}
+        />
+      </FormControl>
+      <Button
+        my="$2"
+        loading={setThunderXLoading()}
+        onClick={async () => {
+          const resp = await setThunderX()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("global.save")}
+      </Button>
       <Heading my="$2">{t("settings.token")}</Heading>
-      <Input value={form.token} readOnly />
+      <Input value={token()} readOnly />
       <HStack my="$2" spacing="$2">
-        <Button onClick={() => copy(form.token)}>
+        <Button
+          onClick={() => {
+            copy(token())
+          }}
+        >
           {t("settings_other.copy_token")}
         </Button>
         <Button
@@ -295,7 +447,7 @@ const OtherSettings = () => {
             const resp = await resetToken()
             handleResp(resp, (data) => {
               notify.success(t("settings_other.reset_token_success"))
-              setForm("token", data)
+              setToken(data)
             })
           }}
         >
