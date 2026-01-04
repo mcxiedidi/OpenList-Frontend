@@ -233,7 +233,7 @@ const OtherSettings = () => {
       <Heading my="$2">{t("settings_other.115")}</Heading>
       <FormControl w="$full" display="flex" flexDirection="column">
         <FormLabel for="115_temp_dir" display="flex" alignItems="center">
-          {t(`settings_other.115_temp_dir`)}
+          {t("settings_other.115_temp_dir")}
         </FormLabel>
         <FolderChooseInput
           id="115_temp_dir"
@@ -256,7 +256,7 @@ const OtherSettings = () => {
       <Heading my="$2">{t("settings_other.115_open")}</Heading>
       <FormControl w="$full" display="flex" flexDirection="column">
         <FormLabel for="115_open_temp_dir" display="flex" alignItems="center">
-          {t(`settings_other.115_open_temp_dir`)}
+          {t("settings_other.115_open_temp_dir")}
         </FormLabel>
         <FolderChooseInput
           id="115_open_temp_dir"
@@ -279,7 +279,7 @@ const OtherSettings = () => {
       <Heading my="$2">{t("settings_other.123_pan")}</Heading>
       <FormControl w="$full" display="flex" flexDirection="column">
         <FormLabel for="123_temp_dir" display="flex" alignItems="center">
-          {t(`settings_other.123_temp_dir`)}
+          {t("settings_other.123_temp_dir")}
         </FormLabel>
         <FolderChooseInput
           id="123_temp_dir"
@@ -302,7 +302,7 @@ const OtherSettings = () => {
       <Heading my="$2">{t("settings_other.123_open")}</Heading>
       <FormControl w="$full" display="flex" flexDirection="column">
         <FormLabel for="123_open_temp_dir" display="flex" alignItems="center">
-          {t(`settings_other.123_open_temp_dir`)}
+          {t("settings_other.123_open_temp_dir")}
         </FormLabel>
         <FolderChooseInput
           id="123_open_temp_dir"
@@ -314,7 +314,7 @@ const OtherSettings = () => {
           display="flex"
           alignItems="center"
         >
-          {t(`settings_other.123_open_callback_url`)}
+          {t("settings_other.123_open_callback_url")}
         </FormLabel>
         <Input
           id="123_open_callback_url"
@@ -337,7 +337,7 @@ const OtherSettings = () => {
       <Heading my="$2">{t("settings_other.pikpak")}</Heading>
       <FormControl w="$full" display="flex" flexDirection="column">
         <FormLabel for="pikpak_temp_dir" display="flex" alignItems="center">
-          {t(`settings_other.pikpak_temp_dir`)}
+          {t("settings_other.pikpak_temp_dir")}
         </FormLabel>
         <FolderChooseInput
           id="pikpak_temp_dir"
@@ -360,7 +360,7 @@ const OtherSettings = () => {
       <Heading my="$2">{t("settings_other.thunder")}</Heading>
       <FormControl w="$full" display="flex" flexDirection="column">
         <FormLabel for="thunder_temp_dir" display="flex" alignItems="center">
-          {t(`settings_other.thunder_temp_dir`)}
+          {t("settings_other.thunder_temp_dir")}
         </FormLabel>
         <FolderChooseInput
           id="thunder_temp_dir"
@@ -387,7 +387,7 @@ const OtherSettings = () => {
           display="flex"
           alignItems="center"
         >
-          {t(`settings_other.thunder_browser_temp_dir`)}
+          {t("settings_other.thunder_browser_temp_dir")}
         </FormLabel>
         <FolderChooseInput
           id="thunder_browser_temp_dir"
@@ -410,7 +410,7 @@ const OtherSettings = () => {
       <Heading my="$2">{t("settings_other.thunderx")}</Heading>
       <FormControl w="$full" display="flex" flexDirection="column">
         <FormLabel for="thunderX_temp_dir" display="flex" alignItems="center">
-          {t(`settings_other.thunderX_temp_dir`)}
+          {t("settings_other.thunderX_temp_dir")}
         </FormLabel>
         <FolderChooseInput
           id="thunderX_temp_dir"
