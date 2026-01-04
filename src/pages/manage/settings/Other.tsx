@@ -49,8 +49,8 @@ const OtherSettings = () => {
       titleKey: "settings_other.aria2",
       api: "/admin/setting/set_aria2",
       fields: [
-        { key: "aria2_uri", type: "input", labelKey: "aria2_uri" },
-        { key: "aria2_secret", type: "input", labelKey: "aria2_secret" },
+        { key: "uri", type: "input", labelKey: "aria2_uri" },
+        { key: "secret", type: "input", labelKey: "aria2_secret" },
       ],
     },
     {
@@ -58,9 +58,9 @@ const OtherSettings = () => {
       titleKey: "settings_other.qbittorrent",
       api: "/admin/setting/set_qbit",
       fields: [
-        { key: "qbittorrent_url", type: "input", labelKey: "qbittorrent_url" },
+        { key: "url", type: "input", labelKey: "qbittorrent_url" },
         {
-          key: "qbittorrent_seedtime",
+          key: "seedtime",
           type: "input",
           labelKey: "qbittorrent_seedtime",
         },
@@ -72,12 +72,12 @@ const OtherSettings = () => {
       api: "/admin/setting/set_transmission",
       fields: [
         {
-          key: "transmission_uri",
+          key: "uri",
           type: "input",
           labelKey: "transmission_uri",
         },
         {
-          key: "transmission_seedtime",
+          key: "seedtime",
           type: "input",
           labelKey: "transmission_seedtime",
         },
@@ -89,7 +89,7 @@ const OtherSettings = () => {
       api: "/admin/setting/set_115",
       fields: [
         {
-          key: "115_temp_dir",
+          key: "temp_dir",
           type: "folder",
           labelKey: "settings_other.115_temp_dir",
         },
@@ -101,7 +101,7 @@ const OtherSettings = () => {
       api: "/admin/setting/set_115_open",
       fields: [
         {
-          key: "115_open_temp_dir",
+          key: "temp_dir",
           type: "folder",
           labelKey: "settings_other.115_open_temp_dir",
         },
@@ -113,7 +113,7 @@ const OtherSettings = () => {
       api: "/admin/setting/set_123_pan",
       fields: [
         {
-          key: "123_pan_temp_dir",
+          key: "temp_dir",
           type: "folder",
           labelKey: "settings_other.123_temp_dir",
         },
@@ -125,12 +125,12 @@ const OtherSettings = () => {
       api: "/admin/setting/set_123_open",
       fields: [
         {
-          key: "123_open_temp_dir",
+          key: "temp_dir",
           type: "folder",
           labelKey: "settings_other.123_open_temp_dir",
         },
         {
-          key: "123_open_callback_url",
+          key: "callback_url",
           type: "input",
           labelKey: "settings_other.123_open_callback_url",
         },
@@ -142,7 +142,7 @@ const OtherSettings = () => {
       api: "/admin/setting/set_pikpak",
       fields: [
         {
-          key: "pikpak_temp_dir",
+          key: "temp_dir",
           type: "folder",
           labelKey: "settings_other.pikpak_temp_dir",
         },
@@ -154,7 +154,7 @@ const OtherSettings = () => {
       api: "/admin/setting/set_thunder",
       fields: [
         {
-          key: "thunder_temp_dir",
+          key: "temp_dir",
           type: "folder",
           labelKey: "settings_other.thunder_temp_dir",
         },
@@ -166,7 +166,7 @@ const OtherSettings = () => {
       api: "/admin/setting/set_thunder_browser",
       fields: [
         {
-          key: "thunder_browser_temp_dir",
+          key: "temp_dir",
           type: "folder",
           labelKey: "settings_other.thunder_browser_temp_dir",
         },
@@ -178,7 +178,7 @@ const OtherSettings = () => {
       api: "/admin/setting/set_thunderx",
       fields: [
         {
-          key: "thunderx_temp_dir",
+          key: "temp_dir",
           type: "folder",
           labelKey: "settings_other.thunderX_temp_dir",
         },
